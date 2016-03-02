@@ -71,19 +71,25 @@ public final class Attributes {
   public static final class Key<T> {
     private final String name;
 
-    /**
-     * Construct the key.
-     *
-     * @param name the name, which should be namespaced like com.foo.BarAttribute to avoid
-     *             collision.
-     */
-    public Key(String name) {
+    private Key(String name) {
       this.name = name;
     }
 
     @Override
     public String toString() {
       return name;
+    }
+
+    /**
+     * Factory method for creating instances of {@link Key}.
+     *
+     * @param name the name of Key, which should be namespaced like com.foo.BarAttribute to avoid
+     *             collision. Name collision, won't cause key collision.
+     * @param <T> Key type
+     * @return Key object
+     */
+    public static <T> Key<T> of(String name) {
+      return new Key<T>(name);
     }
   }
 
