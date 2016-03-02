@@ -60,6 +60,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.SslHandshakeCompletionEvent;
 import io.netty.util.AsciiString;
+import io.netty.util.Attribute;
 import io.netty.util.ReferenceCountUtil;
 
 import java.net.URI;
@@ -72,6 +73,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLSession;
 
 /**
  * Common {@link ProtocolNegotiator}s used by gRPC.
@@ -138,6 +140,12 @@ public final class ProtocolNegotiators {
 
       SSLEngine sslEngine = sslContext.newEngine(ctx.alloc());
       ctx.pipeline().addFirst(new SslHandler(sslEngine, false));
+
+      // TODO(lukaszx0) Short term solution. Long term we want to plumb this through
+      // ProtocolNegotiator.Handler and pass the handler into NettyClientHandler and
+      // NettyServerHandler
+      Attribute<SSLSession> sslSessionAttr = ctx.channel().attr(Utils.SSL_SESSION_ATTR_KEY);
+      sslSessionAttr.set(sslEngine.getSession());
     }
 
     @Override
