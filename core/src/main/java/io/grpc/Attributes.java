@@ -77,13 +77,24 @@ public final class Attributes {
      * @param name the name, which should be namespaced like com.foo.BarAttribute to avoid
      *             collision.
      */
-    public Key(String name) {
+    private Key(String name) {
       this.name = name;
     }
 
     @Override
     public String toString() {
       return name;
+    }
+
+    /**
+     * Convenience method for creating instances of {@link Key} class.
+     *
+     * @param name of Key
+     * @param <T> Key type
+     * @return Key object
+     */
+    public static <T> Key<T> of(String name) {
+      return new Key<T>(name);
     }
   }
 
