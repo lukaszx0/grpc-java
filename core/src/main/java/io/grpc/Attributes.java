@@ -31,12 +31,17 @@
 
 package io.grpc;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * An immutable type-safe container of attributes.
@@ -45,7 +50,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class Attributes {
 
-  private final HashMap<String, Object> data = new HashMap<String, Object>();
+  private final HashMap<Key<?>, Object> data = newHashMap();
 
   public static final Attributes EMPTY = new Attributes();
 
@@ -58,7 +63,26 @@ public final class Attributes {
   @SuppressWarnings("unchecked")
   @Nullable
   public <T> T get(Key<T> key) {
-    return (T) data.get(key.name);
+    return (T) data.get(key);
+  }
+
+  /**
+   * Returns size of the container.
+   *
+   * @return int size of the container.
+   */
+  @VisibleForTesting
+  int size() {
+    return data.size();
+  }
+
+  /**
+   * Returns set of keys stored in container.
+   *
+   * @return Set of Key objects.
+   */
+  public Set<Key<?>> keys() {
+    return Collections.unmodifiableSet(data.keySet());
   }
 
   /**
@@ -75,7 +99,7 @@ public final class Attributes {
      * Construct the key.
      *
      * @param name the name, which should be namespaced like com.foo.BarAttribute to avoid
-     *             collision.
+     *             collision. Name collision, won't cause key collision.
      */
     private Key(String name) {
       this.name = name;
@@ -111,7 +135,7 @@ public final class Attributes {
     }
 
     public <T> Builder set(Key<T> key, T value) {
-      product.data.put(key.name, value);
+      product.data.put(key, value);
       return this;
     }
 
