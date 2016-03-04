@@ -63,37 +63,69 @@ import javax.net.ssl.SSLSession;
 /**
  * Common utilities for GRPC.
  */
+// TODO(lukaszx0) replace all deprecated calls internally and remove deprecated fields in 1.0 (?)
 public final class GrpcUtil {
 
   /**
    * {@link io.grpc.Metadata.Key} for the timeout header.
    */
-  public static final Metadata.Key<Long> TIMEOUT_KEY =
+  public static final Metadata.Key<Long> TIMEOUT_METADATA_KEY =
           Metadata.Key.of(GrpcUtil.TIMEOUT, new TimeoutMarshaller());
+
+  /**
+   * @deprecated replaced by {@link #TIMEOUT_METADATA_KEY}
+   */
+  @Deprecated
+  public static final Metadata.Key<Long> TIMEOUT_KEY = TIMEOUT_METADATA_KEY;
 
   /**
    * {@link io.grpc.Metadata.Key} for the message encoding header.
    */
-  public static final Metadata.Key<String> MESSAGE_ENCODING_KEY =
+  public static final Metadata.Key<String> MESSAGE_ENCODING_METADATA_KEY =
           Metadata.Key.of(GrpcUtil.MESSAGE_ENCODING, Metadata.ASCII_STRING_MARSHALLER);
+
+  /**
+   * @deprecated replaced by {@link #MESSAGE_ENCODING_METADATA_KEY}
+   */
+  @Deprecated
+  public static final Metadata.Key<String> MESSAGE_ENCODING_KEY = MESSAGE_ENCODING_METADATA_KEY;
 
   /**
    * {@link io.grpc.Metadata.Key} for the accepted message encodings header.
    */
-  public static final Metadata.Key<String> MESSAGE_ACCEPT_ENCODING_KEY =
+  public static final Metadata.Key<String> MESSAGE_ACCEPT_ENCODING_METADATA_KEY =
           Metadata.Key.of(GrpcUtil.MESSAGE_ACCEPT_ENCODING, Metadata.ASCII_STRING_MARSHALLER);
 
   /**
-   * {@link io.grpc.Metadata.Key} for the Content-Type request/response header.
+   * @deprecated replaced by {@link #MESSAGE_ACCEPT_ENCODING_METADATA_KEY}
    */
-  public static final Metadata.Key<String> CONTENT_TYPE_KEY =
-          Metadata.Key.of("content-type", Metadata.ASCII_STRING_MARSHALLER);
+  @Deprecated
+  public static final Metadata.Key<String> MESSAGE_ACCEPT_ENCODING_KEY =
+          MESSAGE_ACCEPT_ENCODING_METADATA_KEY;
 
   /**
    * {@link io.grpc.Metadata.Key} for the Content-Type request/response header.
    */
-  public static final Metadata.Key<String> USER_AGENT_KEY =
+  public static final Metadata.Key<String> CONTENT_TYPE_METADATA_KEY =
+          Metadata.Key.of("content-type", Metadata.ASCII_STRING_MARSHALLER);
+
+  /**
+   * @deprecated replaced by {@link #CONTENT_TYPE_METADATA_KEY}
+   */
+  @Deprecated
+  public static final Metadata.Key<String> CONTENT_TYPE_KEY = CONTENT_TYPE_METADATA_KEY;
+
+  /**
+   * {@link io.grpc.Metadata.Key} for the Content-Type request/response header.
+   */
+  public static final Metadata.Key<String> USER_AGENT_METADATA_KEY =
           Metadata.Key.of("user-agent", Metadata.ASCII_STRING_MARSHALLER);
+
+  /**
+   * @deprecated replaced by {@link #USER_AGENT_METADATA_KEY}
+   */
+  @Deprecated
+  public static final Metadata.Key<String> USER_AGENT_KEY = USER_AGENT_METADATA_KEY;
 
   /**
    * {@link io.grpc.Attributes.Key} for the remote address of stream call.
