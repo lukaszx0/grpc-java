@@ -31,6 +31,7 @@
 
 package io.grpc.testing;
 
+import io.grpc.Attributes;
 import io.grpc.ExperimentalApi;
 import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
 import io.grpc.Metadata;
@@ -122,6 +123,25 @@ public class TestUtils {
           Metadata requestHeaders,
           ServerCallHandler<ReqT, RespT> next) {
         headersCapture.set(requestHeaders);
+        return next.startCall(method, call, requestHeaders);
+      }
+    };
+  }
+
+  /**
+   * Capture the request attributes. Useful for testing ServerCalls.
+   * {@link ServerCall#attributes()}
+   */
+  public static ServerInterceptor recordServerCallInterceptor(
+      final AtomicReference<ServerCall> serverCallCapture) {
+    return new ServerInterceptor() {
+      @Override
+      public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
+          MethodDescriptor<ReqT, RespT> method,
+          ServerCall<RespT> call,
+          Metadata requestHeaders,
+          ServerCallHandler<ReqT, RespT> next) {
+        serverCallCapture.set(call);
         return next.startCall(method, call, requestHeaders);
       }
     };

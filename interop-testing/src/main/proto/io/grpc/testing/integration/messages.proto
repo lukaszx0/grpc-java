@@ -74,6 +74,9 @@ message SimpleRequest {
 
   // Whether SimpleResponse should include OAuth scope.
   bool fill_oauth_scope = 5;
+
+  // Whether SimpleResponse should include remote_address
+  bool fill_remote_address = 6;
 }
 
 // Unary response, as configured by the request.
@@ -85,6 +88,8 @@ message SimpleResponse {
   string username = 2;
   // OAuth scope.
   string oauth_scope = 3;
+  // Remote Address
+  string remote_address = 5;
 }
 
 message SimpleContext {
