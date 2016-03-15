@@ -140,12 +140,6 @@ public final class ProtocolNegotiators {
 
       SSLEngine sslEngine = sslContext.newEngine(ctx.alloc());
       ctx.pipeline().addFirst(new SslHandler(sslEngine, false));
-
-      // TODO(lukaszx0) Short term solution. Long term we want to plumb this through
-      // ProtocolNegotiator.Handler and pass the handler into NettyClientHandler and
-      // NettyServerHandler
-      Attribute<SSLSession> sslSessionAttr = ctx.channel().attr(Utils.SSL_SESSION_ATTR_KEY);
-      sslSessionAttr.set(sslEngine.getSession());
     }
 
     @Override
@@ -162,6 +156,12 @@ public final class ProtocolNegotiators {
             // Successfully negotiated the protocol. Replace this handler with
             // the GRPC handler.
             ctx.pipeline().replace(this, null, grpcHandler);
+
+            // TODO(lukaszx0) Short term solution. Long term we want to plumb this through
+            // ProtocolNegotiator.Handler and pass the handler into NettyClientHandler and
+            // NettyServerHandler
+            Attribute<SSLSession> sslSessionAttr = ctx.channel().attr(Utils.SSL_SESSION_ATTR_KEY);
+            sslSessionAttr.set(sslHandler(ctx.pipeline()).engine().getSession());
           } else {
             fail(ctx, new Exception(
                 "Failed protocol negotiation: Unable to find compatible protocol."));
