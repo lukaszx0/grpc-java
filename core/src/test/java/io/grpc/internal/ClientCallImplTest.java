@@ -196,7 +196,7 @@ public class ClientCallImplTest {
     ClientCallImpl.prepareHeaders(m, CallOptions.DEFAULT, "user agent", decompressorRegistry,
         Codec.Identity.NONE);
 
-    assertEquals(m.get(GrpcUtil.USER_AGENT_KEY), "user agent");
+    assertEquals(m.get(GrpcUtil.USER_AGENT_METADATA_KEY), "user agent");
   }
 
   @Test
@@ -259,14 +259,14 @@ public class ClientCallImplTest {
   @Test
   public void prepareHeaders_removeReservedHeaders() {
     Metadata m = new Metadata();
-    m.put(GrpcUtil.USER_AGENT_KEY, "user agent");
+    m.put(GrpcUtil.USER_AGENT_METADATA_KEY, "user agent");
     m.put(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY, "gzip");
     m.put(GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY, "gzip");
 
     ClientCallImpl.prepareHeaders(m, CallOptions.DEFAULT, null,
         DecompressorRegistry.newEmptyInstance(), Codec.Identity.NONE);
 
-    assertNull(m.get(GrpcUtil.USER_AGENT_KEY));
+    assertNull(m.get(GrpcUtil.USER_AGENT_METADATA_KEY));
     assertNull(m.get(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY));
     assertNull(m.get(GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
   }

@@ -32,7 +32,7 @@
 package io.grpc.okhttp;
 
 import static io.grpc.internal.GrpcUtil.CONTENT_TYPE_METADATA_KEY;
-import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
+import static io.grpc.internal.GrpcUtil.USER_AGENT_METADATA_KEY;
 
 import com.google.common.base.Preconditions;
 
@@ -78,8 +78,8 @@ public class Headers {
     String path = defaultPath;
     okhttpHeaders.add(new Header(Header.TARGET_PATH, path));
 
-    String userAgent = GrpcUtil.getGrpcUserAgent("okhttp", headers.get(USER_AGENT_KEY));
-    okhttpHeaders.add(new Header(GrpcUtil.USER_AGENT_KEY.name(), userAgent));
+    String userAgent = GrpcUtil.getGrpcUserAgent("okhttp", headers.get(USER_AGENT_METADATA_KEY));
+    okhttpHeaders.add(new Header(GrpcUtil.USER_AGENT_METADATA_KEY.name(), userAgent));
 
     // All non-pseudo headers must come after pseudo headers.
     okhttpHeaders.add(CONTENT_TYPE_HEADER);
@@ -107,6 +107,6 @@ public class Headers {
     // Don't allow HTTP/2 pseudo headers or content-type to be added by the application.
     return (!key.startsWith(":")
             && !CONTENT_TYPE_METADATA_KEY.name().equalsIgnoreCase(key))
-            && !USER_AGENT_KEY.name().equalsIgnoreCase(key);
+            && !USER_AGENT_METADATA_KEY.name().equalsIgnoreCase(key);
   }
 }

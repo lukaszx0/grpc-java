@@ -32,7 +32,7 @@
 package io.grpc.netty;
 
 import static io.grpc.internal.GrpcUtil.CONTENT_TYPE_METADATA_KEY;
-import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
+import static io.grpc.internal.GrpcUtil.USER_AGENT_METADATA_KEY;
 import static io.netty.util.CharsetUtil.UTF_8;
 
 import com.google.common.base.Preconditions;
@@ -76,7 +76,7 @@ class Utils {
   public static final AsciiString CONTENT_TYPE_GRPC = AsciiString.of(GrpcUtil.CONTENT_TYPE_GRPC);
   public static final AsciiString TE_HEADER = AsciiString.of("te");
   public static final AsciiString TE_TRAILERS = AsciiString.of(GrpcUtil.TE_TRAILERS);
-  public static final AsciiString USER_AGENT = AsciiString.of(USER_AGENT_KEY.name());
+  public static final AsciiString USER_AGENT = AsciiString.of(USER_AGENT_METADATA_KEY.name());
 
   public static final Resource<EventLoopGroup> DEFAULT_BOSS_EVENT_LOOP_GROUP =
       new DefaultEventLoopGroupResource(1, "grpc-default-boss-ELG");
@@ -130,7 +130,7 @@ class Utils {
         .set(TE_HEADER, TE_TRAILERS);
 
     // Set the User-Agent header.
-    String userAgent = GrpcUtil.getGrpcUserAgent("netty", headers.get(USER_AGENT_KEY));
+    String userAgent = GrpcUtil.getGrpcUserAgent("netty", headers.get(USER_AGENT_METADATA_KEY));
     http2Headers.set(USER_AGENT, new AsciiString(userAgent.getBytes(UTF_8)));
 
     return http2Headers;

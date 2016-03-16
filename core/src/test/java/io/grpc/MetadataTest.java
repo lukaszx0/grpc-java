@@ -266,7 +266,7 @@ public class MetadataTest {
   public void removeIgnoresMissingValue() {
     Metadata m = new Metadata();
     // Any key will work.
-    Key<String> key = GrpcUtil.USER_AGENT_KEY;
+    Key<String> key = GrpcUtil.USER_AGENT_METADATA_KEY;
 
     boolean success = m.remove(key, "agent");
     assertFalse(success);
@@ -276,7 +276,7 @@ public class MetadataTest {
   public void removeAllIgnoresMissingValue() {
     Metadata m = new Metadata();
     // Any key will work.
-    Key<String> key = GrpcUtil.USER_AGENT_KEY;
+    Key<String> key = GrpcUtil.USER_AGENT_METADATA_KEY;
 
     Iterable<String> removed = m.removeAll(key);
     assertNull(removed);

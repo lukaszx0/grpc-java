@@ -39,7 +39,7 @@ import static io.grpc.internal.GrpcUtil.ACCEPT_ENCODING_JOINER;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.TIMEOUT_METADATA_KEY;
-import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
+import static io.grpc.internal.GrpcUtil.USER_AGENT_METADATA_KEY;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -140,9 +140,9 @@ final class ClientCallImpl<ReqT, RespT> extends ClientCall<ReqT, RespT>
   static void prepareHeaders(Metadata headers, CallOptions callOptions, String userAgent,
       DecompressorRegistry decompressorRegistry, Compressor compressor) {
     // Fill out the User-Agent header.
-    headers.removeAll(USER_AGENT_KEY);
+    headers.removeAll(USER_AGENT_METADATA_KEY);
     if (userAgent != null) {
-      headers.put(USER_AGENT_KEY, userAgent);
+      headers.put(USER_AGENT_METADATA_KEY, userAgent);
     }
 
     headers.removeAll(MESSAGE_ENCODING_METADATA_KEY);

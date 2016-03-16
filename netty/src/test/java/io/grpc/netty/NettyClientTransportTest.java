@@ -34,7 +34,7 @@ package io.grpc.netty;
 import static com.google.common.base.Charsets.UTF_8;
 import static io.grpc.Status.Code.INTERNAL;
 import static io.grpc.internal.GrpcUtil.DEFAULT_MAX_MESSAGE_SIZE;
-import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
+import static io.grpc.internal.GrpcUtil.USER_AGENT_METADATA_KEY;
 import static io.netty.handler.codec.http2.Http2CodecUtil.DEFAULT_WINDOW_SIZE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -144,7 +144,7 @@ public class NettyClientTransportTest {
     assertEquals(1, serverListener.streamListeners.size());
 
     Metadata headers = serverListener.streamListeners.get(0).headers;
-    assertEquals(GrpcUtil.getGrpcUserAgent("netty", null), headers.get(USER_AGENT_KEY));
+    assertEquals(GrpcUtil.getGrpcUserAgent("netty", null), headers.get(USER_AGENT_METADATA_KEY));
   }
 
   @Test
@@ -156,14 +156,14 @@ public class NettyClientTransportTest {
     // Send a single RPC and wait for the response.
     String userAgent = "testUserAgent";
     Metadata sentHeaders = new Metadata();
-    sentHeaders.put(USER_AGENT_KEY, userAgent);
+    sentHeaders.put(USER_AGENT_METADATA_KEY, userAgent);
     new Rpc(transport, sentHeaders).halfClose().waitForResponse();
 
     // Verify that the received headers contained the User-Agent.
     assertEquals(1, serverListener.streamListeners.size());
     Metadata receivedHeaders = serverListener.streamListeners.get(0).headers;
     assertEquals(GrpcUtil.getGrpcUserAgent("netty", userAgent),
-        receivedHeaders.get(USER_AGENT_KEY));
+        receivedHeaders.get(USER_AGENT_METADATA_KEY));
   }
 
   @Test

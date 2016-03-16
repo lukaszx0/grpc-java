@@ -132,6 +132,8 @@ public final class GrpcUtil {
 
   /**
    * @deprecated replaced by {@link #USER_AGENT_METADATA_KEY}.
+   *
+   * Scheduled for removal in 0.15.
    */
   @Deprecated
   public static final Metadata.Key<String> USER_AGENT_KEY = USER_AGENT_METADATA_KEY;

@@ -406,7 +406,7 @@ public class OkHttpClientTransportTest {
     MockStreamListener listener = new MockStreamListener();
     OkHttpClientStream stream = clientTransport.newStream(method, new Metadata());
     stream.start(listener);
-    Header userAgentHeader = new Header(GrpcUtil.USER_AGENT_KEY.name(),
+    Header userAgentHeader = new Header(GrpcUtil.USER_AGENT_METADATA_KEY.name(),
             GrpcUtil.getGrpcUserAgent("okhttp", null));
     List<Header> expectedHeaders = Arrays.asList(SCHEME_HEADER, METHOD_HEADER,
             new Header(Header.TARGET_AUTHORITY, "notarealauthority:80"),
@@ -424,13 +424,13 @@ public class OkHttpClientTransportTest {
     MockStreamListener listener = new MockStreamListener();
     String userAgent = "fakeUserAgent";
     Metadata metadata = new Metadata();
-    metadata.put(GrpcUtil.USER_AGENT_KEY, userAgent);
+    metadata.put(GrpcUtil.USER_AGENT_METADATA_KEY, userAgent);
     OkHttpClientStream stream = clientTransport.newStream(method, metadata);
     stream.start(listener);
     List<Header> expectedHeaders = Arrays.asList(SCHEME_HEADER, METHOD_HEADER,
         new Header(Header.TARGET_AUTHORITY, "notarealauthority:80"),
         new Header(Header.TARGET_PATH, "/fakemethod"),
-        new Header(GrpcUtil.USER_AGENT_KEY.name(),
+        new Header(GrpcUtil.USER_AGENT_METADATA_KEY.name(),
             GrpcUtil.getGrpcUserAgent("okhttp", userAgent)),
         CONTENT_TYPE_HEADER, TE_HEADER);
     verify(frameWriter, timeout(TIME_OUT_MS))
