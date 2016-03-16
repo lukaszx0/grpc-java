@@ -31,6 +31,10 @@
 
 package io.grpc.netty;
 
+import com.google.common.base.Optional;
+
+import javax.net.ssl.SSLSession;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import io.grpc.Attributes;
@@ -150,9 +154,15 @@ class NettyServerStream extends AbstractServerStream<Integer> {
   }
 
   private static Attributes buildAttributes(Channel channel) {
+    // NB(lukaszx0) SSLSession will be set only if SSL handshake was successful
+    Optional<SSLSession> sslSession = Optional.absent();
+    if (channel.hasAttr(Utils.SSL_SESSION_ATTR_KEY)) {
+      sslSession = Optional.fromNullable(channel.attr(Utils.SSL_SESSION_ATTR_KEY).get());
+    }
+
     return Attributes.newBuilder()
         .set(GrpcUtil.REMOTE_ADDR_STREAM_ATTR_KEY, channel.remoteAddress())
-        .set(GrpcUtil.SSL_SESSION_STREAM_ATTR_KEY, channel.attr(Utils.SSL_SESSION_ATTR_KEY).get())
+        .set(GrpcUtil.SSL_SESSION_STREAM_ATTR_KEY, sslSession)
         .build();
   }
 }

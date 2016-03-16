@@ -35,6 +35,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -136,7 +137,7 @@ public final class GrpcUtil {
   /**
    * {@link io.grpc.Attributes.Key} for the SSL session of stream call.
    */
-  public static final Attributes.Key<SSLSession> SSL_SESSION_STREAM_ATTR_KEY =
+  public static final Attributes.Key<Optional<SSLSession>> SSL_SESSION_STREAM_ATTR_KEY =
           Attributes.Key.of("io.grpc.SslSession");
 
   /**
