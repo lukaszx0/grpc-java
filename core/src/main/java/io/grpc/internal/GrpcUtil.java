@@ -118,6 +118,8 @@ public final class GrpcUtil {
 
   /**
    * @deprecated replaced by {@link #CONTENT_TYPE_METADATA_KEY}.
+   *
+   * Scheduled for removal in 0.15.
    */
   @Deprecated
   public static final Metadata.Key<String> CONTENT_TYPE_KEY = CONTENT_TYPE_METADATA_KEY;

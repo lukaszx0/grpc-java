@@ -209,7 +209,7 @@ public abstract class Http2ClientStream extends AbstractClientStream<Integer> {
       return null;
     }
     contentTypeChecked = true;
-    String contentType = headers.get(GrpcUtil.CONTENT_TYPE_KEY);
+    String contentType = headers.get(GrpcUtil.CONTENT_TYPE_METADATA_KEY);
     if (!GrpcUtil.isGrpcContentType(contentType)) {
       return Status.INTERNAL.withDescription("Invalid content-type: " + contentType);
     }
@@ -220,7 +220,7 @@ public abstract class Http2ClientStream extends AbstractClientStream<Integer> {
    * Inspect the raw metadata and figure out what charset is being used.
    */
   private static Charset extractCharset(Metadata headers) {
-    String contentType = headers.get(GrpcUtil.CONTENT_TYPE_KEY);
+    String contentType = headers.get(GrpcUtil.CONTENT_TYPE_METADATA_KEY);
     if (contentType != null) {
       String[] split = contentType.split("charset=");
       try {

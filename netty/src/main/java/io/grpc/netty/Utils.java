@@ -31,7 +31,7 @@
 
 package io.grpc.netty;
 
-import static io.grpc.internal.GrpcUtil.CONTENT_TYPE_KEY;
+import static io.grpc.internal.GrpcUtil.CONTENT_TYPE_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
 import static io.netty.util.CharsetUtil.UTF_8;
 
@@ -72,7 +72,7 @@ class Utils {
   public static final AsciiString HTTP_METHOD = AsciiString.of(GrpcUtil.HTTP_METHOD);
   public static final AsciiString HTTPS = AsciiString.of("https");
   public static final AsciiString HTTP = AsciiString.of("http");
-  public static final AsciiString CONTENT_TYPE_HEADER = AsciiString.of(CONTENT_TYPE_KEY.name());
+  public static final AsciiString CONTENT_TYPE_HEADER = AsciiString.of(CONTENT_TYPE_METADATA_KEY.name());
   public static final AsciiString CONTENT_TYPE_GRPC = AsciiString.of(GrpcUtil.CONTENT_TYPE_GRPC);
   public static final AsciiString TE_HEADER = AsciiString.of("te");
   public static final AsciiString TE_TRAILERS = AsciiString.of(GrpcUtil.TE_TRAILERS);

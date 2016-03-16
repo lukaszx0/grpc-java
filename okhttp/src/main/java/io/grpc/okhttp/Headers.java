@@ -31,7 +31,7 @@
 
 package io.grpc.okhttp;
 
-import static io.grpc.internal.GrpcUtil.CONTENT_TYPE_KEY;
+import static io.grpc.internal.GrpcUtil.CONTENT_TYPE_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
 
 import com.google.common.base.Preconditions;
@@ -54,7 +54,7 @@ public class Headers {
   public static final Header SCHEME_HEADER = new Header(Header.TARGET_SCHEME, "https");
   public static final Header METHOD_HEADER = new Header(Header.TARGET_METHOD, GrpcUtil.HTTP_METHOD);
   public static final Header CONTENT_TYPE_HEADER =
-      new Header(CONTENT_TYPE_KEY.name(), GrpcUtil.CONTENT_TYPE_GRPC);
+      new Header(CONTENT_TYPE_METADATA_KEY.name(), GrpcUtil.CONTENT_TYPE_GRPC);
   public static final Header TE_HEADER = new Header("te", GrpcUtil.TE_TRAILERS);
 
   /**
@@ -106,7 +106,7 @@ public class Headers {
   private static boolean isApplicationHeader(String key) {
     // Don't allow HTTP/2 pseudo headers or content-type to be added by the application.
     return (!key.startsWith(":")
-            && !CONTENT_TYPE_KEY.name().equalsIgnoreCase(key))
+            && !CONTENT_TYPE_METADATA_KEY.name().equalsIgnoreCase(key))
             && !USER_AGENT_KEY.name().equalsIgnoreCase(key);
   }
 }
