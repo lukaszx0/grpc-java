@@ -161,8 +161,8 @@ class NettyServerStream extends AbstractServerStream<Integer> {
     }
 
     return Attributes.newBuilder()
-        .set(GrpcUtil.REMOTE_ADDR_STREAM_ATTR_KEY, channel.remoteAddress())
-        .set(GrpcUtil.SSL_SESSION_STREAM_ATTR_KEY, sslSession)
+        .set(GrpcUtil.REMOTE_ADDR_CALL_ATTR_KEY, channel.remoteAddress())
+        .set(GrpcUtil.SSL_SESSION_CALL_ATTR_KEY, sslSession)
         .build();
   }
 }

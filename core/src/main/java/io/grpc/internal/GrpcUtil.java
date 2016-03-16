@@ -131,13 +131,13 @@ public final class GrpcUtil {
   /**
    * {@link io.grpc.Attributes.Key} for the remote address of stream call.
    */
-  public static final Attributes.Key<SocketAddress> REMOTE_ADDR_STREAM_ATTR_KEY =
+  public static final Attributes.Key<SocketAddress> REMOTE_ADDR_CALL_ATTR_KEY =
           Attributes.Key.of("io.grpc.RemoteAddr");
 
   /**
    * {@link io.grpc.Attributes.Key} for the SSL session of stream call.
    */
-  public static final Attributes.Key<Optional<SSLSession>> SSL_SESSION_STREAM_ATTR_KEY =
+  public static final Attributes.Key<Optional<SSLSession>> SSL_SESSION_CALL_ATTR_KEY =
           Attributes.Key.of("io.grpc.SslSession");
 
   /**
