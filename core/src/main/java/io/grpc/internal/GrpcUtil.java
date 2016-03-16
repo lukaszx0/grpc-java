@@ -75,6 +75,8 @@ public final class GrpcUtil {
 
   /**
    * @deprecated replaced by {@link #TIMEOUT_METADATA_KEY}.
+   *
+   * Scheduled for removal in 0.15.
    */
   @Deprecated
   public static final Metadata.Key<Long> TIMEOUT_KEY = TIMEOUT_METADATA_KEY;

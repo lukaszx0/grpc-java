@@ -610,7 +610,7 @@ public abstract class AbstractInteropTest {
         .withDeadlineAfter(configuredTimeoutMinutes, TimeUnit.MINUTES);
     stub.emptyCall(Empty.getDefaultInstance());
     long transferredTimeoutMinutes = TimeUnit.NANOSECONDS.toMinutes(
-        requestHeadersCapture.get().get(GrpcUtil.TIMEOUT_KEY));
+        requestHeadersCapture.get().get(GrpcUtil.TIMEOUT_METADATA_KEY));
     Assert.assertTrue(
         "configuredTimeoutMinutes=" + configuredTimeoutMinutes
             + ", transferredTimeoutMinutes=" + transferredTimeoutMinutes,

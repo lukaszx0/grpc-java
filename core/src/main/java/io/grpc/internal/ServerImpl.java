@@ -32,7 +32,7 @@
 package io.grpc.internal;
 
 import static com.google.common.base.Preconditions.checkState;
-import static io.grpc.internal.GrpcUtil.TIMEOUT_KEY;
+import static io.grpc.internal.GrpcUtil.TIMEOUT_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.TIMER_SERVICE;
 
 import com.google.common.base.Preconditions;
@@ -338,7 +338,7 @@ public final class ServerImpl extends io.grpc.Server {
 
     private Future<?> scheduleTimeout(final ServerStream stream, Metadata headers,
                                       final Context.CancellableContext context) {
-      Long timeoutNanos = headers.get(TIMEOUT_KEY);
+      Long timeoutNanos = headers.get(TIMEOUT_METADATA_KEY);
       if (timeoutNanos == null) {
         return DEFAULT_TIMEOUT_FUTURE;
       }

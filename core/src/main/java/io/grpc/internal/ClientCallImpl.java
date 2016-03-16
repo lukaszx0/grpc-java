@@ -38,7 +38,7 @@ import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 import static io.grpc.internal.GrpcUtil.ACCEPT_ENCODING_JOINER;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_KEY;
-import static io.grpc.internal.GrpcUtil.TIMEOUT_KEY;
+import static io.grpc.internal.GrpcUtil.TIMEOUT_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -241,7 +241,7 @@ final class ClientCallImpl<ReqT, RespT> extends ClientCall<ReqT, RespT>
     // Fill out timeout on the headers
     // TODO(carl-mastrangelo): Find out if this should always remove the timeout,
     // even when returning false.
-    headers.removeAll(TIMEOUT_KEY);
+    headers.removeAll(TIMEOUT_METADATA_KEY);
     // Convert the deadline to timeout. Timeout is more favorable than deadline on the wire
     // because timeout tolerates the clock difference between machines.
     Long timeoutNanos = getRemainingTimeoutNanos(deadlineNanoTime);
@@ -249,7 +249,7 @@ final class ClientCallImpl<ReqT, RespT> extends ClientCall<ReqT, RespT>
       if (timeoutNanos <= 0) {
         return false;
       }
-      headers.put(TIMEOUT_KEY, timeoutNanos);
+      headers.put(TIMEOUT_METADATA_KEY, timeoutNanos);
     }
     return true;
   }
