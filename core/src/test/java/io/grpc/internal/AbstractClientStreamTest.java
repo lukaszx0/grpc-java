@@ -221,7 +221,7 @@ public class AbstractClientStreamTest {
     AbstractClientStream<Integer> stream = new BaseAbstractClientStream<Integer>(allocator);
     stream.start(mockListener);
     Metadata headers = new Metadata();
-    headers.put(GrpcUtil.MESSAGE_ENCODING_KEY, new Codec.Gzip().getMessageEncoding());
+    headers.put(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY, new Codec.Gzip().getMessageEncoding());
 
     stream.inboundHeadersReceived(headers);
     verify(mockListener).headersRead(headers);
@@ -232,7 +232,7 @@ public class AbstractClientStreamTest {
     AbstractClientStream<Integer> stream = new BaseAbstractClientStream<Integer>(allocator);
     stream.start(mockListener);
     Metadata headers = new Metadata();
-    headers.put(GrpcUtil.MESSAGE_ENCODING_KEY, Codec.Identity.NONE.getMessageEncoding());
+    headers.put(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY, Codec.Identity.NONE.getMessageEncoding());
 
     stream.inboundHeadersReceived(headers);
     verify(mockListener).headersRead(headers);

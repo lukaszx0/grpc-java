@@ -37,7 +37,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static io.grpc.internal.GrpcUtil.ACCEPT_ENCODING_JOINER;
 import static io.grpc.internal.GrpcUtil.ACCEPT_ENCODING_SPLITER;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY;
-import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_KEY;
+import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_METADATA_KEY;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Throwables;
@@ -85,8 +85,8 @@ final class ServerCallImpl<ReqT, RespT> extends ServerCall<RespT> {
     this.decompressorRegistry = decompressorRegistry;
     this.compressorRegistry = compressorRegistry;
 
-    if (inboundHeaders.containsKey(MESSAGE_ENCODING_KEY)) {
-      String encoding = inboundHeaders.get(MESSAGE_ENCODING_KEY);
+    if (inboundHeaders.containsKey(MESSAGE_ENCODING_METADATA_KEY)) {
+      String encoding = inboundHeaders.get(MESSAGE_ENCODING_METADATA_KEY);
       Decompressor decompressor = decompressorRegistry.lookupDecompressor(encoding);
       if (decompressor == null) {
         throw Status.INTERNAL
@@ -107,7 +107,7 @@ final class ServerCallImpl<ReqT, RespT> extends ServerCall<RespT> {
     checkState(!sendHeadersCalled, "sendHeaders has already been called");
     checkState(!closeCalled, "call is closed");
 
-    headers.removeAll(MESSAGE_ENCODING_KEY);
+    headers.removeAll(MESSAGE_ENCODING_METADATA_KEY);
     if (compressor == null) {
       compressor = Codec.Identity.NONE;
       if (inboundHeaders.containsKey(MESSAGE_ACCEPT_ENCODING_KEY)) {
@@ -134,7 +134,7 @@ final class ServerCallImpl<ReqT, RespT> extends ServerCall<RespT> {
     }
     inboundHeaders = null;
     if (compressor != Codec.Identity.NONE) {
-      headers.put(MESSAGE_ENCODING_KEY, compressor.getMessageEncoding());
+      headers.put(MESSAGE_ENCODING_METADATA_KEY, compressor.getMessageEncoding());
     }
     stream.setCompressor(compressor);
 

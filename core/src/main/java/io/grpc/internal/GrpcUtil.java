@@ -89,6 +89,8 @@ public final class GrpcUtil {
 
   /**
    * @deprecated replaced by {@link #MESSAGE_ENCODING_METADATA_KEY}.
+   *
+   * Scheduled for removal in 0.15.
    */
   @Deprecated
   public static final Metadata.Key<String> MESSAGE_ENCODING_KEY = MESSAGE_ENCODING_METADATA_KEY;

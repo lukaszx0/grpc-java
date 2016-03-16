@@ -32,7 +32,7 @@
 package io.grpc.testing.integration;
 
 import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY;
-import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_KEY;
+import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_METADATA_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -210,7 +210,7 @@ public class CompressionTest {
     stub.unaryCall(REQUEST);
 
     if (clientAcceptEncoding && serverEncoding) {
-      assertEquals("fzip", clientResponseHeaders.get(MESSAGE_ENCODING_KEY));
+      assertEquals("fzip", clientResponseHeaders.get(MESSAGE_ENCODING_METADATA_KEY));
       if (enableServerMessageCompression) {
         assertTrue(clientCodec.anyRead);
         assertTrue(serverCodec.anyWritten);
@@ -219,7 +219,7 @@ public class CompressionTest {
         assertFalse(serverCodec.anyWritten);
       }
     } else {
-      assertNull(clientResponseHeaders.get(MESSAGE_ENCODING_KEY));
+      assertNull(clientResponseHeaders.get(MESSAGE_ENCODING_METADATA_KEY));
       assertFalse(clientCodec.anyRead);
       assertFalse(serverCodec.anyWritten);
     }
@@ -238,7 +238,7 @@ public class CompressionTest {
 
     // Second call, once the client knows what the server supports.
     if (clientEncoding && serverAcceptEncoding) {
-      assertEquals("fzip", serverResponseHeaders.get(MESSAGE_ENCODING_KEY));
+      assertEquals("fzip", serverResponseHeaders.get(MESSAGE_ENCODING_METADATA_KEY));
       if (enableClientMessageCompression) {
         assertTrue(clientCodec.anyWritten);
         assertTrue(serverCodec.anyRead);
@@ -247,7 +247,7 @@ public class CompressionTest {
         assertFalse(serverCodec.anyRead);
       }
     } else {
-      assertNull(serverResponseHeaders.get(MESSAGE_ENCODING_KEY));
+      assertNull(serverResponseHeaders.get(MESSAGE_ENCODING_METADATA_KEY));
       assertFalse(clientCodec.anyWritten);
       assertFalse(serverCodec.anyRead);
     }

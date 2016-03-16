@@ -84,7 +84,7 @@ public class CompressingHelloWorldClient {
       @Override
       public void onHeaders(Metadata headers) {
         super.onHeaders(headers);
-        String encoding = headers.get(GrpcUtil.MESSAGE_ENCODING_KEY);
+        String encoding = headers.get(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY);
         if (encoding == null) {
           throw new RuntimeException("No compression selected!");
         }

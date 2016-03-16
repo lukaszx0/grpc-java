@@ -167,7 +167,7 @@ public class TransportCompressionTest extends AbstractInteropTest {
                   @Override
                   public void onHeaders(Metadata headers) {
                     super.onHeaders(headers);
-                    String encoding = headers.get(GrpcUtil.MESSAGE_ENCODING_KEY);
+                    String encoding = headers.get(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY);
                     assertEquals(encoding, Fzip.INSTANCE.getMessageEncoding());
                   }
                 };

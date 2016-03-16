@@ -37,7 +37,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 import static io.grpc.internal.GrpcUtil.ACCEPT_ENCODING_JOINER;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY;
-import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_KEY;
+import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.TIMEOUT_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.USER_AGENT_KEY;
 
@@ -145,9 +145,9 @@ final class ClientCallImpl<ReqT, RespT> extends ClientCall<ReqT, RespT>
       headers.put(USER_AGENT_KEY, userAgent);
     }
 
-    headers.removeAll(MESSAGE_ENCODING_KEY);
+    headers.removeAll(MESSAGE_ENCODING_METADATA_KEY);
     if (compressor != Codec.Identity.NONE) {
-      headers.put(MESSAGE_ENCODING_KEY, compressor.getMessageEncoding());
+      headers.put(MESSAGE_ENCODING_METADATA_KEY, compressor.getMessageEncoding());
     }
 
     headers.removeAll(MESSAGE_ACCEPT_ENCODING_KEY);
@@ -358,8 +358,8 @@ final class ClientCallImpl<ReqT, RespT> extends ClientCall<ReqT, RespT>
     @Override
     public void headersRead(final Metadata headers) {
       Decompressor decompressor = Codec.Identity.NONE;
-      if (headers.containsKey(MESSAGE_ENCODING_KEY)) {
-        String encoding = headers.get(MESSAGE_ENCODING_KEY);
+      if (headers.containsKey(MESSAGE_ENCODING_METADATA_KEY)) {
+        String encoding = headers.get(MESSAGE_ENCODING_METADATA_KEY);
         decompressor = decompressorRegistry.lookupDecompressor(encoding);
         if (decompressor == null) {
           stream.cancel(Status.INTERNAL.withDescription(
