@@ -31,7 +31,7 @@
 
 package io.grpc.testing.integration;
 
-import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY;
+import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_METADATA_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -225,15 +225,15 @@ public class CompressionTest {
     }
 
     if (serverAcceptEncoding) {
-      assertEquals("fzip", clientResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_KEY));
+      assertEquals("fzip", clientResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
     } else {
-      assertNull(clientResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_KEY));
+      assertNull(clientResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
     }
 
     if (clientAcceptEncoding) {
-      assertEquals("fzip", serverResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_KEY));
+      assertEquals("fzip", serverResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
     } else {
-      assertNull(serverResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_KEY));
+      assertNull(serverResponseHeaders.get(MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
     }
 
     // Second call, once the client knows what the server supports.

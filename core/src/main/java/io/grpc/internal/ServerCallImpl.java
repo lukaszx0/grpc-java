@@ -36,7 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static io.grpc.internal.GrpcUtil.ACCEPT_ENCODING_JOINER;
 import static io.grpc.internal.GrpcUtil.ACCEPT_ENCODING_SPLITER;
-import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY;
+import static io.grpc.internal.GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY;
 import static io.grpc.internal.GrpcUtil.MESSAGE_ENCODING_METADATA_KEY;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -110,8 +110,8 @@ final class ServerCallImpl<ReqT, RespT> extends ServerCall<RespT> {
     headers.removeAll(MESSAGE_ENCODING_METADATA_KEY);
     if (compressor == null) {
       compressor = Codec.Identity.NONE;
-      if (inboundHeaders.containsKey(MESSAGE_ACCEPT_ENCODING_KEY)) {
-        String acceptEncodings = inboundHeaders.get(MESSAGE_ACCEPT_ENCODING_KEY);
+      if (inboundHeaders.containsKey(MESSAGE_ACCEPT_ENCODING_METADATA_KEY)) {
+        String acceptEncodings = inboundHeaders.get(MESSAGE_ACCEPT_ENCODING_METADATA_KEY);
         for (String acceptEncoding : ACCEPT_ENCODING_SPLITER.split(acceptEncodings)) {
           Compressor c = compressorRegistry.lookupCompressor(acceptEncoding);
           if (c != null) {
@@ -121,8 +121,8 @@ final class ServerCallImpl<ReqT, RespT> extends ServerCall<RespT> {
         }
       }
     } else {
-      if (inboundHeaders.containsKey(MESSAGE_ACCEPT_ENCODING_KEY)) {
-        String acceptEncodings = inboundHeaders.get(MESSAGE_ACCEPT_ENCODING_KEY);
+      if (inboundHeaders.containsKey(MESSAGE_ACCEPT_ENCODING_METADATA_KEY)) {
+        String acceptEncodings = inboundHeaders.get(MESSAGE_ACCEPT_ENCODING_METADATA_KEY);
         List<String> acceptedEncodingsList = ACCEPT_ENCODING_SPLITER.splitToList(acceptEncodings);
         if (!acceptedEncodingsList.contains(compressor.getMessageEncoding())) {
           // resort to using no compression.
@@ -138,10 +138,10 @@ final class ServerCallImpl<ReqT, RespT> extends ServerCall<RespT> {
     }
     stream.setCompressor(compressor);
 
-    headers.removeAll(MESSAGE_ACCEPT_ENCODING_KEY);
+    headers.removeAll(MESSAGE_ACCEPT_ENCODING_METADATA_KEY);
     Set<String> acceptEncodings = decompressorRegistry.getAdvertisedMessageEncodings();
     if (!acceptEncodings.isEmpty()) {
-      headers.put(MESSAGE_ACCEPT_ENCODING_KEY, ACCEPT_ENCODING_JOINER.join(acceptEncodings));
+      headers.put(MESSAGE_ACCEPT_ENCODING_METADATA_KEY, ACCEPT_ENCODING_JOINER.join(acceptEncodings));
     }
 
     // Don't check if sendMessage has been called, since it requires that sendHeaders was already

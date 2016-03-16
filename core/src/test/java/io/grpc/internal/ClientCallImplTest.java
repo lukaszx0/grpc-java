@@ -157,7 +157,7 @@ public class ClientCallImplTest {
     Metadata actual = metadataCaptor.getValue();
 
     Set<String> acceptedEncodings =
-        ImmutableSet.copyOf(actual.getAll(GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY));
+        ImmutableSet.copyOf(actual.getAll(GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
     assertEquals(decompressorRegistry.getAdvertisedMessageEncodings(), acceptedEncodings);
   }
 
@@ -250,7 +250,7 @@ public class ClientCallImplTest {
         Codec.Identity.NONE);
 
     Iterable<String> acceptedEncodings =
-        ACCEPT_ENCODING_SPLITER.split(m.get(GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY));
+        ACCEPT_ENCODING_SPLITER.split(m.get(GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
 
     // Order may be different, since decoder priorities have not yet been implemented.
     assertEquals(ImmutableSet.of("b", "a"), ImmutableSet.copyOf(acceptedEncodings));
@@ -261,14 +261,14 @@ public class ClientCallImplTest {
     Metadata m = new Metadata();
     m.put(GrpcUtil.USER_AGENT_KEY, "user agent");
     m.put(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY, "gzip");
-    m.put(GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY, "gzip");
+    m.put(GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY, "gzip");
 
     ClientCallImpl.prepareHeaders(m, CallOptions.DEFAULT, null,
         DecompressorRegistry.newEmptyInstance(), Codec.Identity.NONE);
 
     assertNull(m.get(GrpcUtil.USER_AGENT_KEY));
     assertNull(m.get(GrpcUtil.MESSAGE_ENCODING_METADATA_KEY));
-    assertNull(m.get(GrpcUtil.MESSAGE_ACCEPT_ENCODING_KEY));
+    assertNull(m.get(GrpcUtil.MESSAGE_ACCEPT_ENCODING_METADATA_KEY));
   }
 
   @Test
