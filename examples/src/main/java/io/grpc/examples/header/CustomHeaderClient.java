@@ -31,15 +31,24 @@
 
 package io.grpc.examples.header;
 
+import io.grpc.CallOptions;
 import io.grpc.Channel;
+import io.grpc.ClientCall;
 import io.grpc.ClientInterceptor;
 import io.grpc.ClientInterceptors;
+import io.grpc.ForwardingClientCall;
+import io.grpc.ForwardingClientCallListener;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
+import io.grpc.MethodDescriptor;
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.examples.helloworld.GreeterGrpc;
 import io.grpc.examples.helloworld.HelloReply;
 import io.grpc.examples.helloworld.HelloRequest;
+import io.grpc.stub.ClientCalls;
+import io.grpc.stub.ServerCalls;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -62,7 +71,7 @@ public class CustomHeaderClient {
     originChannel = ManagedChannelBuilder.forAddress(host, port)
         .usePlaintext(true)
         .build();
-    ClientInterceptor interceptor = new HeaderClientInterceptor();
+    ClientInterceptor interceptor = new RetryInterceptor();
     Channel channel = ClientInterceptors.intercept(originChannel, interceptor);
     blockingStub = GreeterGrpc.newBlockingStub(channel);
   }
@@ -101,6 +110,70 @@ public class CustomHeaderClient {
       client.greet(user);
     } finally {
       client.shutdown();
+    }
+  }
+
+  public static final class RetryInterceptor implements ClientInterceptor {
+    @Override
+    public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next) {
+      return new RetrybleClientCall<ReqT, RespT>(next.newCall(method, callOptions), next, method, callOptions);;
+    }
+  }
+
+  public static class RetrybleClientCall<ReqT, RespT> extends ForwardingClientCall<ReqT, RespT> {
+    private final ClientCall<ReqT, RespT> orignalCall;
+    private final Channel channel;
+    private final MethodDescriptor<ReqT, RespT> method;
+    private final CallOptions callOptions;
+    public ReqT orignalRequest;
+
+    protected RetrybleClientCall(ClientCall<ReqT, RespT> orignalCall, Channel next, MethodDescriptor<ReqT, RespT> method, CallOptions callOptions) {
+      this.orignalCall = orignalCall;
+      this.channel = next;
+      this.method = method;
+      this.callOptions = callOptions;
+    }
+
+    @Override
+    public void start(Listener<RespT> responseListener, Metadata headers) {
+      super.start(new RetryableClientCallListener(responseListener), headers);
+    }
+
+    @Override
+    public void sendMessage(ReqT message) {
+      if (orignalRequest == null) {
+        orignalRequest = message;
+      }
+      super.sendMessage(orignalRequest);
+    }
+
+    @Override
+    protected ClientCall<ReqT, RespT> delegate() {
+      return orignalCall;
+    }
+
+    public class RetryableClientCallListener extends ForwardingClientCallListener<RespT> {
+      private final Listener<RespT> delegateListener;
+
+      public RetryableClientCallListener(Listener<RespT> delegateListener) {
+        this.delegateListener = delegateListener;
+      }
+
+      @Override
+      protected Listener<RespT> delegate() {
+        return delegateListener;
+      }
+
+      @Override
+      public void onClose(Status status, Metadata trailers) {
+        if (!status.isOk()) {
+          logger.info("failed, retrying");
+          // Failed, start new request
+          ClientCalls.blockingUnaryCall(channel.newCall(method, callOptions), orignalRequest);
+        } else {
+          super.onClose(status, trailers);
+        }
+      }
     }
   }
 }
