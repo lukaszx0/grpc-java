@@ -31,6 +31,7 @@
 
 package io.grpc;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 import java.io.InputStream;
@@ -235,6 +236,20 @@ public class MethodDescriptor<ReqT, RespT> {
   public MethodDescriptor<ReqT, RespT> withIdempotent(boolean idempotent) {
     return new MethodDescriptor<ReqT, RespT>(type, fullMethodName, requestMarshaller,
         responseMarshaller, idempotent);
+  }
+
+  /**
+   * Returns a string representation of the MethodDescriptor.
+   *
+   * @return a string representation.
+   */
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("fullMethodName", fullMethodName)
+        .add("type", type)
+        .add("idempotent", idempotent)
+        .toString();
   }
 
   /**
