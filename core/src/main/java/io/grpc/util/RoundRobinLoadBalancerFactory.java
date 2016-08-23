@@ -31,24 +31,19 @@
 
 package io.grpc.util;
 
-import com.google.common.base.Supplier;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.grpc.Attributes;
 import io.grpc.EquivalentAddressGroup;
 import io.grpc.ExperimentalApi;
 import io.grpc.LoadBalancer;
 import io.grpc.NameResolver;
+import io.grpc.AbstractLoadBalancer;
 import io.grpc.ResolvedServerInfo;
-import io.grpc.Status;
 import io.grpc.TransportManager;
-import io.grpc.TransportManager.InterimTransport;
 import io.grpc.internal.RoundRobinServerList;
-
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.concurrent.GuardedBy;
-
 
 /**
  * A {@link LoadBalancer} that provides round-robin load balancing mechanism over the
@@ -73,115 +68,28 @@ public final class RoundRobinLoadBalancerFactory extends LoadBalancer.Factory {
     return new RoundRobinLoadBalancer<T>(tm);
   }
 
-  private static class RoundRobinLoadBalancer<T> extends LoadBalancer<T> {
-    private static final Status SHUTDOWN_STATUS =
-        Status.UNAVAILABLE.augmentDescription("RoundRobinLoadBalancer has shut down");
-
-    private final Object lock = new Object();
-
-    @GuardedBy("lock")
-    private RoundRobinServerList<T> addresses;
-    @GuardedBy("lock")
-    private InterimTransport<T> interimTransport;
-    @GuardedBy("lock")
-    private Status nameResolutionError;
-    @GuardedBy("lock")
-    private boolean closed;
-
-    private final TransportManager<T> tm;
-
+  private static class RoundRobinLoadBalancer<T> extends AbstractLoadBalancer<T> {
     private RoundRobinLoadBalancer(TransportManager<T> tm) {
-      this.tm = tm;
+      super(tm);
     }
 
     @Override
-    public T pickTransport(Attributes affinity) {
-      final RoundRobinServerList<T> addressesCopy;
-      synchronized (lock) {
-        if (closed) {
-          return tm.createFailingTransport(SHUTDOWN_STATUS);
+    protected T doPickTransport(List<? extends List<ResolvedServerInfo>> updatedServers,
+        Attributes attributes) {
+      RoundRobinServerList.Builder<T> listBuilder = new RoundRobinServerList.Builder<T>(tm);
+      for (List<ResolvedServerInfo> servers : updatedServers) {
+        if (servers.isEmpty()) {
+          continue;
         }
-        if (addresses == null) {
-          if (nameResolutionError != null) {
-            return tm.createFailingTransport(nameResolutionError);
-          }
-          if (interimTransport == null) {
-            interimTransport = tm.createInterimTransport();
-          }
-          return interimTransport.transport();
-        }
-        addressesCopy = addresses;
-      }
-      return addressesCopy.getTransportForNextServer();
-    }
 
-    @Override
-    public void handleResolvedAddresses(
-        List<? extends List<ResolvedServerInfo>> updatedServers, Attributes config) {
-      final InterimTransport<T> savedInterimTransport;
-      final RoundRobinServerList<T> addressesCopy;
-      synchronized (lock) {
-        if (closed) {
-          return;
+        final List<SocketAddress> socketAddresses = new ArrayList<SocketAddress>(servers.size());
+        for (ResolvedServerInfo server : servers) {
+          socketAddresses.add(server.getAddress());
         }
-        RoundRobinServerList.Builder<T> listBuilder = new RoundRobinServerList.Builder<T>(tm);
-        for (List<ResolvedServerInfo> servers : updatedServers) {
-          if (servers.isEmpty()) {
-            continue;
-          }
-
-          final List<SocketAddress> socketAddresses = new ArrayList<SocketAddress>(servers.size());
-          for (ResolvedServerInfo server : servers) {
-            socketAddresses.add(server.getAddress());
-          }
-          listBuilder.addList(socketAddresses);
-        }
-        addresses = listBuilder.build();
-        addressesCopy = addresses;
-        nameResolutionError = null;
-        savedInterimTransport = interimTransport;
-        interimTransport = null;
+        listBuilder.addList(socketAddresses);
       }
-      if (savedInterimTransport != null) {
-        savedInterimTransport.closeWithRealTransports(new Supplier<T>() {
-            @Override public T get() {
-              return addressesCopy.getTransportForNextServer();
-            }
-          });
-      }
-    }
-
-    @Override
-    public void handleNameResolutionError(Status error) {
-      InterimTransport<T> savedInterimTransport;
-      synchronized (lock) {
-        if (closed) {
-          return;
-        }
-        error = error.augmentDescription("Name resolution failed");
-        savedInterimTransport = interimTransport;
-        interimTransport = null;
-        nameResolutionError = error;
-      }
-      if (savedInterimTransport != null) {
-        savedInterimTransport.closeWithError(error);
-      }
-    }
-
-    @Override
-    public void shutdown() {
-      InterimTransport<T> savedInterimTransport;
-      synchronized (lock) {
-        if (closed) {
-          return;
-        }
-        closed = true;
-        savedInterimTransport = interimTransport;
-        interimTransport = null;
-      }
-      if (savedInterimTransport != null) {
-        savedInterimTransport.closeWithError(SHUTDOWN_STATUS);
-      }
+      RoundRobinServerList<T> roundRobinList = listBuilder.build();
+      return roundRobinList.getTransportForNextServer();
     }
   }
 }

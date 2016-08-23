@@ -146,7 +146,7 @@ class GrpclbLoadBalancer<T> extends LoadBalancer<T> {
       }
       serverListCopy = roundRobinServerList;
     }
-    return serverListCopy.getTransportForNextServer();
+    return serverListCopy.getTransport();
   }
 
   @Override
@@ -324,7 +324,7 @@ class GrpclbLoadBalancer<T> extends LoadBalancer<T> {
         savedInterimTransport.closeWithRealTransports(new Supplier<T>() {
             @Override
             public T get() {
-              return newRoundRobinServerList.getTransportForNextServer();
+              return newRoundRobinServerList.getTransport();
             }
           });
       }
